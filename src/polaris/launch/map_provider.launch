@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<launch>
+	<arg name="map_file" default="$(find polaris)/first_drive.yaml"/>
+	<node pkg="map_server" type="map_server" name="map_server" args="$(arg map_file)"> 
+	<remap from="/map" to="/gmapping/map" /> 
+	</node>
+	
+	<!--node pkg="rviz" type="rviz" name="rviz" args="-d $(find polaris)/config/rviz_default.rviz" /-->
+	
+</launch>

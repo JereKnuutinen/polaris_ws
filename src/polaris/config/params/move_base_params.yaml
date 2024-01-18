@@ -1,0 +1,31 @@
+shutdown_costmaps: false
+
+controller_frequency: 20.0
+controller_patience: 3.0 # How long the controller will wait in seconds without receiving a valid control before space-clearing operations are performed
+
+planner_frequency: 20.0
+planner_patience: 5.0
+
+oscillation_timeout: 0.0
+oscillation_distance: 0.5
+
+recovery_behavior_enabled: true
+clearing_rotation_allowed: false # Determines whether or not the robot will attempt an in-place rotation when attempting to clear out space. 
+
+# Recovery behaviours are triggered as a last resort when your local planner fails to generate a local plan. 
+# Since we're concerned with clearing the local costmap, we'll add this logic to our recovery behaviours.
+# It is very important to specify the obstacle_layer as one of the layer_names or the costmap won't get reset correctly. 
+# You might wanna increase reset_distance for conservative_reset if you don't wanna clear the full costmap.
+#recovery_behaviors:
+#  - name: 'conservative_reset'
+#    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+#  - name: 'aggressive_reset'
+#    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+
+#conservative_reset:
+#  reset_distance: 0.1
+#  layer_names: ['obstacle_layer']
+
+#aggressive_reset:
+#  reset_distance: 0.0
+#  layer_names: ['obstacle_layer']

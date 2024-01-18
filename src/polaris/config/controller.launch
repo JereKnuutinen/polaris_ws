@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<launch>   
+	<!-- Run Mission Controller --> 
+    <node  pkg="mission_controller" type="mission_control" name="mission_controller" output="screen" />
+    <param name="waypoints_filename" value="/waypoints/aalto_waypoints.txt" type="string" />	
+    <param name="goalTolerance" value="5.0" type="double"  />
+    
+    <!-- Run Auxiliary Mission Controller -->
+    <node pkg="mission_controller" type="auxiliary_mission_control" name="auxiliary_mission_controller" output="screen" />
+    <param name="waypoints_filename" value="/waypoints/aalto_waypoints.txt" type="string" />	
+    <param name="goalTolerance" value="5.0" type="double"  />
+    
+    <!-- Run Switch Controller -->
+    <node pkg="mission_controller" type="switch_controls" name="switch_controllers" output="screen" />
+      
+    <!-- Run Motion Controller -->
+    <node pkg="motion_controller" type="motion_control" name="motion_control" output="screen" />    
+	
+	<!--- Run Move Base --> 
+	<include file="$(find polaris)/config/move_base.launch" />  
+</launch>

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<launch>
+    <include file="$(find polaris)/config/atv_can.launch" />
+
+    
+    <node pkg="tf" type="static_transform_publisher" name="base_link_imu" args="0.63 0.08 1.55 0 0 0 base_link imu 20" />
+    <node pkg="tf" type="static_transform_publisher" name="base_link_gps" args="0.63 0.08 1.55 0 0 0 base_link gps 20" />
+    <include file="$(find polaris)/config/novatel.launch">     
+    </include>
+    
+	<node pkg="ekf_node" type="EKF_node" name="ekf_node" output="screen">
+  	</node>
+	
+    <include file="$(find polaris)/config/joy.launch" />    
+    <node pkg="tools" type="teleop_vehicle" name="tools" output="screen">
+    <param name="max_torque" value="500" /> 
+    </node>
+
+</launch>

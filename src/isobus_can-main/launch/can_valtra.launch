@@ -1,0 +1,4 @@
+<launch>
+        
+        <node pkg="isobus_can" name="can_socket_node" type="can_socket_node" output="screen" />
+</launch>

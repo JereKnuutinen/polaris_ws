@@ -1,0 +1,75 @@
+# Note that now the Z-origin of the obstacle layer is at 0 metre, 
+# it has a height of 10 unit cell and the size of a cell is 0.1 metres. 
+# Putting everything together, I essentially have a 2D costmap 
+# that considers obstacles of height between 0 and max metres. 
+origin_z: 0.0
+z_resolution: 1 # The z resolution of the map in meters/cell.
+z_voxels: 2  # The number of voxels to in each vertical column, the height of the grid is z resolution * z voxels.
+
+obstacle_range: 1.0 # The default maximum distance from the robot at which an obstacle will be inserted into the cost map in meters.
+raytrace_range: 3.0 # The default range in meters at which to raytrace out obstacles from the map using sensor data
+inflation_radius: 0.55 # controls how far away the zero cost point is from the obstacle
+cost_scaling_factor: 1 # slope of the cost decay curve with respect to distance from the object. lower makes robot stay further from obstacles
+
+
+#---standard polaris footprint--- 
+#---(in meters)--- 
+footprint:  [ [2.15, -0.75], [-0.65, -0.75], [-0.65, 0.75], [2.15, 0.75] ]
+transform_tolerance: 0.2 
+map_type: costmap # voxel # (for 3D), previously it was costmap
+publish_voxel_map: false # true for voxel
+
+#observation_sources: laser_scan_sensor 
+
+#laser_scan_sensor: {sensor_frame: laser, data_type: LaserScan, topic: scan, marking: true, clearing: true}
+
+observation_sources: laser_scan_sensor point_cloud_sensor #  A list of sensors that are going to be passing information to the costmap separated by spaces.
+laser_scan_sensor: {sensor_frame: velodyne_tf, # let the package read this information from the topic itself.
+                    data_type: LaserScan, # Uses a laser scan from poincloud_to_laserscan node (2D costmap). 
+                    topic: scan, 
+                    marking: true, 
+                    clearing: true,
+                    inf_is_valid: true} 
+
+point_cloud_sensor: {sensor_frame: base_link, # let the package read this information from the topic itself.
+                     data_type: PointCloud2, # Uses a 3D point cloud from velodyne_pointcloud node (3D costmap).
+                     topic: /velodyne/velodyne_points, 
+                     marking: true, 
+                     clearing: true} 
+
+#obstacle_layer:
+#  enabled:              true
+#  unknown_threshold:    15
+#  mark_threshold:       0
+#  combination_method:   1
+#  track_unknown_space:  true    # Needs for disabling global path planning through unknown space
+#  obstacle_range: 2.5  # The default maximum distance from the robot at which an obstacle will be inserted into the cost map in meters.
+#  raytrace_range: 3.0 # The default range in meters at which to raytrace out obstacles from the map using sensor data
+#  origin_z: 0.0
+#  z_resolution: 0.1 # The z resolution of the map in meters/cell.
+#  z_voxels: 10  # The number of voxels in each vertical column/cell, the height of the grid is z resolution * z voxels.
+#  publish_voxel_map: false
+#  observation_sources: laser_scan_sensor # point_cloud_sensor
+#  laser_scan_sensor:
+#    data_type: LaserScan
+#    topic: scan
+#    marking: true
+#    clearing: true
+#    inf_is_valid: true
+
+#  point_cloud_sensor:
+#    data_type: PointCloud2
+#    topic: /velodyne/velodyne_points
+#    marking: true
+#    clearing: true
+
+# for debugging only, let's you see the entire voxel grid
+
+# cost_scaling_factor and inflation_radius were now moved to the inflation_layer ns
+inflation_layer:
+  enabled:              true
+  cost_scaling_factor:  5.0  # exponential rate at which the obstacle cost drops off (default: 10), slope of the cost decay curve with respect to distance from the object. lower makes robot stay further from obstacles
+  inflation_radius:     0.5  # controls how far away the zero cost point is from the obstacle, max. distance from an obstacle at which costs are incurred for planning paths.
+
+static_layer:
+  enabled: true

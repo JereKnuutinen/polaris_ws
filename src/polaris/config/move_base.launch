@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<launch> 
+
+<group ns="controller_1">
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" > <!-- output="screen"--> 	    
+        <remap from="odom" to="/robot_localization/odometry/filtered_map" />
+    	<remap from="map" to="/map"/>  
+    	<remap from="scan" to="/lidar2scan/scan" /> 
+    	<remap from="cloud_in" to="/velodyne/velodyne_points" /> 
+    	<remap from="cmd_vel" to="/cmd_vel1" />
+    	    	 
+		<rosparam file="$(find polaris)/config/params/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+		<rosparam file="$(find polaris)/config/params/costmap_common_params.yaml" command="load" ns="local_costmap" /> 
+		<rosparam file="$(find polaris)/config/params/local_costmap_params.yaml" command="load" /> 
+		<rosparam file="$(find polaris)/config/params/global_costmap_params.yaml" command="load" /> 
+		<rosparam file="$(find polaris)/config/params/planner_params.yaml" command="load" /> 
+		<rosparam file="$(find polaris)/config/params/move_base_params.yaml" command="load" />
+		<rosparam file="$(find polaris)/config/params/navfn_global_planner_params.yaml" command="load" />
+		
+		<!-- The navfn/NavfnROS is the default global planner for move base -->
+		<param name="base_global_planner" type="string" value="navfn/NavfnROS" />
+		<!-- param name="base_global_planner" type="string" value="voronoi_planner/VoronoiPlanner" /--> 
+		<!-- The base_local_planner/TrajectoryPlannerROS is the default local planner for move base -->
+        <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>
+	</node> 
+</group>
+	
+<group ns="controller_2">
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base"> <!-- output="screen"--> 	    
+        <remap from="odom" to="/robot_localization/odometry/filtered_map" />
+    	<remap from="map" to="/map"/>  
+    	<remap from="scan" to="/lidar2scan/scan" /> 
+    	<remap from="cloud_in" to="/velodyne/velodyne_points" /> 
+    	<remap from="cmd_vel" to="/cmd_vel2" />
+    	    	
+		<rosparam file="$(find polaris)/config/params/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+		<rosparam file="$(find polaris)/config/params/costmap_common_params.yaml" command="load" ns="local_costmap" /> 
+		<rosparam file="$(find polaris)/config/params/local_costmap_params.yaml" command="load" /> 
+		<rosparam file="$(find polaris)/config/params/global_costmap_params.yaml" command="load" /> 
+		<rosparam file="$(find polaris)/config/params/planner_params.yaml" command="load" /> 
+		<rosparam file="$(find polaris)/config/params/move_base_params.yaml" command="load" />	
+		<rosparam file="$(find polaris)/config/params/navfn_global_planner_params.yaml" command="load" />	
+		
+		<!-- The navfn/NavfnROS is the default global planner for move base -->
+		<param name="base_global_planner" type="string" value="navfn/NavfnROS" />
+		<!-- param name="base_global_planner" type="string" value="voronoi_planner/VoronoiPlanner" /--> 
+		<!-- The base_local_planner/TrajectoryPlannerROS is the default local planner for move base -->
+        <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>
+	</node>
+</group> 
+	
+</launch>

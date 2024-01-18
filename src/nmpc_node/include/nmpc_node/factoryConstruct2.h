@@ -1,0 +1,38 @@
+//
+// Academic License - for use in teaching, academic research, and meeting
+// course requirements at degree granting institutions only.  Not for
+// government, commercial, or other organizational use.
+//
+// factoryConstruct2.h
+//
+// Code generation for function 'factoryConstruct2'
+//
+
+#ifndef FACTORYCONSTRUCT2_H
+#define FACTORYCONSTRUCT2_H
+
+// Include files
+#include "rtwtypes.h"
+#include <cstddef>
+#include <cstdlib>
+
+// Type Declarations
+struct i_struct_T;
+
+// Function Declarations
+namespace coder {
+namespace optim {
+namespace coder {
+namespace qpactiveset {
+namespace WorkingSet {
+void factoryConstruct(int mIneqMax, int nVarMax, int mConstrMax,
+                      i_struct_T &obj);
+
+}
+} // namespace qpactiveset
+} // namespace coder
+} // namespace optim
+} // namespace coder
+
+#endif
+// End of code generation (factoryConstruct2.h)

@@ -1,0 +1,14 @@
+global_costmap: 
+  global_frame: map 
+  robot_base_frame: base_link 
+  update_frequency: 20.0 
+  publish_frequency: 5.0 
+  width: 100.0
+  height: 100.0
+  static_map: false # It is true when loading a map from map server.
+  # map_topic: /map # The topic that the costmap subscribes to for the static map, if static_map parameter is set to true. 
+  rolling_window: true # If the static_map parameter is set to true, this parameter must be set to false. 
+#  plugins:
+#      - {name: static_layer,            type: "costmap_2d::StaticLayer"}
+#     - {name: obstacle_layer,          type: "costmap_2d::VoxelLayer"}
+#      - {name: inflation_layer,         type: "costmap_2d::InflationLayer"}

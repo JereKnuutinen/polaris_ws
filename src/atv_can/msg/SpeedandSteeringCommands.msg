@@ -1,0 +1,7 @@
+int16 MotionControlRef
+uint16 TurningRadiusRef
+uint8 GearRatio
+uint8 AllWheelDrive
+uint8 DirectTorqueFlag
+uint8 FwdReverse
+time time_received

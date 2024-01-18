@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<!-- Default launch configuration for the Polaris ATV -->
+<launch>
+  <group ns="can">
+    <include file="$(find polaris)/config/atv_can.launch" />
+  </group>
+	
+  <group ns="novatel">
+    <node pkg="tf" type="static_transform_publisher" name="base_link_imu" args="0.63 0.08 1.55 0 0 0 base_link imu 20" />
+    <node pkg="tf" type="static_transform_publisher" name="base_link_gps" args="0.63 0.08 1.55 0 0 0 base_link gps 20" />
+    <include file="$(find polaris)/config/novatel.launch">     
+    </include>
+  </group>
+
+</launch>

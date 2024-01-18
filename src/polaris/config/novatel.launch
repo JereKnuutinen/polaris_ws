@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+
+<launch>
+  <!-- arg name="span_port" value="/dev/ttyUSB4"/>
+  <arg name="span_baudrate" default="230400" /-->
+  <arg name="gps_port" value="/dev/ttyUSB0"/>
+  <arg name="gps_baudrate" default="230400" />  
+  <arg name="log_commands" default="BESTLEVERARMB ONCHANGED" />
+  <arg name="nav_sat_fix_topic" default="/novatel/gps_fix_inspva" /> 
+  <arg name="bestpos_topic" default="/novatel/gps_fix_bestpos" /> 
+  <arg name="dual_band_range_topic" default="/novatel/range" /> 
+  <arg name="ephemeris_topic" default="/novatel/ephem" /> 
+  <arg name="odom_base_topic" default="/novatel/odom_gps" /> <!-- For odom to base link odometry -->
+  <arg name="odom_map_topic" default="/novatel/odom_map" /> <!-- For map to base link odometry --> 
+  <arg name="psrpos_topic" default="/novatel/gps_fix_psr" />
+  <arg name="bestgnsspos_topic" default="/novatel/gps_fix_psr" /> <!-- For time being same name as PSRPOS topic, but must be chenges when PSRPOS is logged --> 
+  <arg name="ecefpos_topic" default="/novatel/gps_fix_ecef" />  
+  <arg name="imu_topic" default="/novatel/imu" /> <!-- For measured Euler angles, rates and accelerations -->
+  <arg name="gps_default_logs_period" default="0.05" /> 
+  <arg name="span_default_logs_period" default="0.05" />
+  <arg name="bestgnsspos_default_logs_period" default="0" />
+  <arg name="psrpos_default_logs_period" default="0" />
+  <arg name="range_default_logs_period" default="0" />
+  <arg name="ephem_log" default="ONCHANGED" />
+  <arg name="configure_port" default="COM2,115200,RTCMV3,NOVATEL" /> <!-- Do not comment these if RTK corrections are required -->
+  <arg name="lever_arm" default="-0.212,-0.173,0.09" /> <!-- SETIMUANTENNAOFFSET values -->
+  <arg name="gpgga_log_command" default="COM2 GPGGA ONTIME 1"/>
+  	
+  <node pkg="polaris_novatel" type="novatel_node" name="novatel_node" output="screen" 
+      required="true">
+
+    <!-- param name="span_port" value="$(arg span_port)" />
+    <param name="span_baudrate" value="$(arg span_baudrate)" /-->
+    <param name="gps_port" value="$(arg gps_port)" />
+    <param name="gps_baudrate" value="$(arg gps_baudrate)" />
+    <param name="nav_sat_fix_topic" value="$(arg nav_sat_fix_topic)" />
+    <param name="bestpos_topic" value="$(arg bestpos_topic)" />
+    <param name="dual_band_range_topic" value="$(arg dual_band_range_topic)" />
+    <param name="ephemeris_topic" value="$(arg ephemeris_topic)" />
+    <param name="odom_base_topic" value="$(arg odom_base_topic)" />
+    <param name="psrpos_topic" value="$(arg psrpos_topic)" />
+    <param name="bestgnsspos_topic" value="$(arg bestgnsspos_topic)" />
+    <param name="imu_topic" value="$(arg imu_topic)" />
+    <param name="odom_map_topic" value="$(arg odom_map_topic)" />
+    <param name="ecefpos_topic" value="$(arg ecefpos_topic)" />   
+    <param name="log_commands" value="$(arg log_commands)" />
+    <param name="span_default_logs_period" value="$(arg span_default_logs_period)" />
+    <param name="gps_default_logs_period" value="$(arg gps_default_logs_period)" />
+	<!-- Note that NavSatFix topics (as is psrpos) report position covariance
+          matrices with ENU units. In order to obtain this, you must also ask 
+          for the BestUTM log. Otherwise, only PSR LLA will be reported. -->
+    <param name="psrpos_default_logs_period" value="$(arg psrpos_default_logs_period)" />
+	<param name="bestgnsspos_default_logs_period" value="$(arg bestgnsspos_default_logs_period)" />
+	
+    <!-- L1L2Range message. This requires the BestUTM log be requested, as it 
+    requires LLA and LLA StD. -->
+    <param name="range_default_logs_period" value="$(arg range_default_logs_period)" />
+
+    <!-- will call GPSEPHEMB _____, using the string specified here
+        Logging options:
+            ONCHANGED
+            ONNEW
+            ONTIME 1.0 (or other interval)
+            ONCE
+        In the case of an empty string, no ephermis will be requested (default)
+     -->
+    <param name="ephem_log" value="$(arg ephem_log)" />
+
+	<param name="configure_port" value="$(arg configure_port)" />
+	<param name="lever_arm" value="$(arg lever_arm)" />
+	<param name="gpgga_log_command" value="$(arg gpgga_log_command)" />
+    
+  </node>
+
+</launch>
+

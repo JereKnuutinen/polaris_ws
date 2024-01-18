@@ -1,0 +1,10 @@
+navsat_transform:
+  frequency: 50 # The frequency at which it is checks for new /novatel/gps/fix
+  delay: 3.0
+  magnetic_declination_radians: -0.0877 # take negative of half of 9.17 +/- 0.44 degrees error according to source: https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml
+  yaw_offset: -1.5707963 # Take negative to adjust to correct sign, for both magnetic declination and yaw offset.
+  zero_altitude: false
+  broadcast_utm_transform: true
+  publish_filtered_gps: true
+  use_odometry_yaw: false
+  wait_for_datum: false

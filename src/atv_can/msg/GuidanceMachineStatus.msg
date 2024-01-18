@@ -1,0 +1,7 @@
+uint16 EstimatedCurvature
+uint8 MechanicalSystemLock
+uint8 SteeringSystemReading
+uint8 SteeringInputPosition
+uint8 RequestResetCommand
+string Reserved
+time time_received
