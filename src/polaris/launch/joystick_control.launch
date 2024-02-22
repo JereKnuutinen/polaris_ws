@@ -8,4 +8,8 @@
     <include file="$(find polaris)/config/novatel.launch">     
     </include>
     
+    <include file="$(find polaris)/config/joy.launch" />    
+    <node pkg="tools" type="teleop_vehicle" name="tools" output="screen">
+    <param name="max_torque" value="5000" /> 
+    </node>
 </launch>

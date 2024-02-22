@@ -164,6 +164,8 @@ void CanNode::read_next_message() {
 	}
 	case CanMsg::MESSAGE_ID_STEERING_POSITION: {
 		steer_msg.encoder_position = get_bit_range(message.data, 0, 32);
+		steer_msg.SteeringSetPoint = get_bit_range(message.data, 32, 16);
+		steer_msg.SteeringPWM = get_bit_range(message.data, 48, 16);
 		steer_msg.time_received = ros::Time::now();
 		steer_publisher.publish(steer_msg);
 		break;
@@ -173,6 +175,7 @@ void CanNode::read_next_message() {
 		gas_msg.pwm_ratio2 = get_bit_range(message.data, 16, 16);
 		gas_msg.gear_ratio = get_bit_range(message.data, 32, 2);
 		gas_msg.all_wheel_drive = get_bit_range(message.data, 34, 2);
+		gas_msg.SpeedSetPoint = get_bit_range(message.data, 36, 16);
 		gas_msg.time_received = ros::Time::now();
 		gas_publisher.publish(gas_msg);
 		break;
@@ -217,6 +220,8 @@ void CanNode::read_next_message() {
 		 break;
 		 }*/
 	case CanMsg::MESSAGE_ID_MACHINE_SELECTED_SPEEDS: {
+
+
 		mss_msg.SelectedSpeed = get_bit_range(message.data, 0, 16);
 		mss_msg.SelectedDistance = get_bit_range(message.data, 16, 32);
 		mss_msg.Reserved = get_bit_range(message.data, 48, 8);

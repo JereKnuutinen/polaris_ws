@@ -75,7 +75,7 @@ public:
     MPCControllerNode() {
         ros::NodeHandle nh;
         // Subscribe to EKF data
-        EKF_state_estimate_sub_ = nh.subscribe("/ekf_out", 1, &MPCControllerNode::EKFCallback, this);
+        EKF_state_estimate_sub_ = nh.subscribe("/ekf_out1", 1, &MPCControllerNode::EKFCallback, this);
 
         // Publisher for control commands
         cmd_pub_ = nh.advertise<geometry_msgs::Accel>("/nmpc_out", 100);
@@ -231,10 +231,10 @@ public:
         int i,j;
 
         // // // Wait for ATV service server
-        if (!atvServiceClient_.waitForExistence(ros::Duration(10.0))) {
-            ROS_ERROR("ATV service server not available on network (VIATOC NODE) !!!!!!");
-            //return -1;
-        }
+        // if (!atvServiceClient_.waitForExistence(ros::Duration(10.0))) {
+        //     ROS_ERROR("ATV service server not available on network (VIATOC NODE) !!!!!!");
+        //     //return -1;
+        // }
         double acmd;
         double dkcmd;
         double Vcmd;
@@ -250,6 +250,7 @@ public:
             //Check if new sensor data has arrived
             if (new_sensor_data_available_) {
                 ros::WallTime start_, end_;
+                auto start_chrono = std::chrono::high_resolution_clock::now();
                 start_ = ros::WallTime::now();
                 // Check if the initialization is done
                 if (!is_initialization_done_) {
@@ -288,18 +289,27 @@ public:
                 }
                 //std::cout << "printtaapi " << c << std::endl;
                 //struct timespec tic, toc; 
-                //clock_gettime(CLOCK_MONOTONIC, &tic); 
-                nmpc->optimize(30);
+                //clock_gettime(CLOCK_MONOTONIC, &tic);
+                struct timespec start, end;
+                clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+                nmpc->optimize(60);
+                auto end_chrono = std::chrono::high_resolution_clock::now();
+
                 //clock_gettime(CLOCK_MONOTONIC, &toc);
-
+                clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end);
                 end_ = ros::WallTime::now();
-
+    
                 // print results
                 double execution_time = (end_ - start_).toNSec() * 1e-9;
-                std::cout << "Time it takes to solve optimization problem " << execution_time << std::endl;
+                std::cout << "Time (ROS walltime) (s)" << execution_time << std::endl;
                 //toc();
                 //std::cout << "Aika " << (toc.tv_sec - tic.tv_sec) + (toc.tv_nsec - tic.tv_nsec) / 1.0e9 << std::endl;
-                
+                // Calculate the elapsed time
+                long seconds = end.tv_sec - start.tv_sec;
+                long nanoseconds = end.tv_nsec - start.tv_nsec;
+                double elapsed = seconds + nanoseconds*1e-9;
+                std::cout << "Time (clock_gettime) (s) " << elapsed << std::endl;
+                std::cout << "Duration loop(Chrono CPU Time): " << std::chrono::duration<double, std::milli>(end_chrono-start_chrono).count() << "ms"<< std::endl;
                 //std::cout << " after optimize nmpc" << std::endl;
                 acmd = nmpc->u[0];
                 dkcmd = nmpc->u[1];
@@ -379,12 +389,12 @@ public:
                 srv.request.control_mode = false; // true for torque, false for speed
                 srv.request.direction = true;
 
-                if (atvServiceClient_.call(srv)) {
-                    //srv.response;
-                } else {
-                    std::cout << "error in service call (VIATOC NODE)" << std::endl;
-                    ROS_ERROR("Failed to call ATV service from VIATOC node");
-                }
+                // if (atvServiceClient_.call(srv)) {
+                //     //srv.response;
+                // } else {
+                //     std::cout << "error in service call (VIATOC NODE)" << std::endl;
+                //     ROS_ERROR("Failed to call ATV service from VIATOC node");
+                // }
 
                 new_sensor_data_available_ = false;
             }
@@ -397,7 +407,7 @@ private:
     ros::Publisher cmd_pub_; // Controlcommand publisher
     ros::Publisher control_state_pub_; // control state publisher publish second state
     ros::ServiceClient atvServiceClient_;
-    int test_muuttuja;
+    int test_muuttuja1;
 
     std::vector<double> u_ref_ = {0.0, 0.0}; 
     // state for kinematic + 3 dof model

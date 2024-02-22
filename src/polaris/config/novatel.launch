@@ -3,7 +3,7 @@
 <launch>
   <!-- arg name="span_port" value="/dev/ttyUSB4"/>
   <arg name="span_baudrate" default="230400" /-->
-  <arg name="gps_port" value="/dev/ttyUSB0"/>
+  <arg name="gps_port" value="/dev/ttyUSB1"/>
   <arg name="gps_baudrate" default="230400" />  
   <arg name="log_commands" default="BESTLEVERARMB ONCHANGED" />
   <arg name="nav_sat_fix_topic" default="/novatel/gps_fix_inspva" /> 

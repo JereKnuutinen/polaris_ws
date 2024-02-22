@@ -165,8 +165,8 @@ void EKF_Node()
   V_cmd = 0.0;
   acmd = 0.0;
   Kcmd = 0.0;
-  TGC = 0.01;
-  // 0.2;
+  TGC = 0.1;
+  // 0.2; old val = 0.01
   //  initialize the global constants
   Ca = 10419.0;
   //  cornering stiffness
@@ -396,7 +396,7 @@ void EKF_Node()
   //  measurement covariance matrix
   //  xg  - Novatel
   //  yg  - Novatel
-  //  psi - Novatel
+  //  old val: 6e-6;    % psi - Novatel
   //  Vt  - epec
   //  compute diagonal matrix
   std::copy(&dv[0], &dv[196], &R_t[0]);
