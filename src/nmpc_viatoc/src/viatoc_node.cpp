@@ -407,7 +407,7 @@ private:
     ros::Publisher cmd_pub_; // Controlcommand publisher
     ros::Publisher control_state_pub_; // control state publisher publish second state
     ros::ServiceClient atvServiceClient_;
-    int test_muuttuja1;
+    int test_muuttuja2;
 
     std::vector<double> u_ref_ = {0.0, 0.0}; 
     // state for kinematic + 3 dof model
