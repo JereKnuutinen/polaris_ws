@@ -2,7 +2,8 @@
 #include <iostream>
 #include <fstream>
 //double data[36213];
-double data[23412];
+//double data[23412];
+double data[30261];
 template<typename T> bool readFromFile(const char* filename, T* data, int size) {
     std::ifstream file(filename);
     if (!file.is_open()) {
@@ -51,7 +52,7 @@ MyInterpolator::MyInterpolator() {
     // if (!readFromFile("/home/mpc/Desktop/ground_profile.txt", data, 7332)) {
     //     //mexErrMsgTxt("Failed to read data from file.");
     // }
-    if (!readFromFile("/home/mpc/viatoc_matlab/rollover_nmpc-main/maanmitauslaitos_data/Aalto_ll_map_filtered_EKF.txt", data, 23412)) {
+    if (!readFromFile("/home/mpc/viatoc_matlab/rollover_nmpc-main/maanmitauslaitos_data/Aalto_ll_map_filtered_larger_EKF.txt", data, 30261)) {
     //     //mexErrMsgTxt("Failed to read data from file.");
     		std::cout << " MAP reading failed in the case of EKF" << std::endl;
     }
@@ -64,8 +65,10 @@ MyInterpolator::MyInterpolator() {
     //mba::point<2> lo = {24.353891932679812-0.00000000001, 60.449254646676444-0.00000000001};
     //mba::point<2> hi = {24.355007179789787+0.00000000001,  60.449721900186482+0.00000000001};
     // For otaniemi
-    mba::point<2> lo = {24.818043915382614-0.00000000001, 60.187121967051709-0.00000000001};
-    mba::point<2> hi = {24.821661539730453+0.00000000001,  60.188072906353234+0.00000000001}; 
+    //mba::point<2> lo = {24.818043915382614-0.00000000001, 60.187121967051709-0.00000000001};
+    //mba::point<2> hi = {24.821661539730453+0.00000000001,  60.188072906353234+0.00000000001}; 
+    mba::point<2> lo = {24.816579309883824-0.00000000001, 60.187098785392173-0.00000000001};
+    mba::point<2> hi = {24.821128063840732+0.00000000001,  60.188063892751543+0.00000000001}; 
     mba::index<2> grid = {2, 2};
     for (int i = 0; i < size_data; i += 3) {
         mba::point<2> point;
@@ -76,7 +79,7 @@ MyInterpolator::MyInterpolator() {
         val.push_back(value);
     }
     interp = std::unique_ptr<mba::MBA<2>>(new mba::MBA<2>(lo, hi, grid, coo, val));
-    std::cout << "meni" << std::endl;
+    std::cout << "meni interp:sta" << std::endl;
 }
 
 double MyInterpolator::interpolateAt(double x, double y) {
