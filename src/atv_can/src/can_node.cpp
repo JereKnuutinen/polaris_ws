@@ -164,8 +164,8 @@ void CanNode::read_next_message() {
 	}
 	case CanMsg::MESSAGE_ID_STEERING_POSITION: {
 		steer_msg.encoder_position = get_bit_range(message.data, 0, 32);
-		steer_msg.SteeringSetPoint = get_bit_range(message.data, 32, 16);
-		steer_msg.SteeringPWM = get_bit_range(message.data, 48, 16);
+		//steer_msg.SteeringSetPoint = get_bit_range(message.data, 32, 16);
+		//steer_msg.SteeringPWM = get_bit_range(message.data, 48, 16);
 		steer_msg.time_received = ros::Time::now();
 		steer_publisher.publish(steer_msg);
 		break;

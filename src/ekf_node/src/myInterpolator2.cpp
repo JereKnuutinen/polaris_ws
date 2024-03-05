@@ -67,7 +67,7 @@ MyInterpolator::MyInterpolator() {
     // For otaniemi
     //mba::point<2> lo = {24.818043915382614-0.00000000001, 60.187121967051709-0.00000000001};
     //mba::point<2> hi = {24.821661539730453+0.00000000001,  60.188072906353234+0.00000000001}; 
-    mba::point<2> lo = {24.816579309883824-0.00000000001, 60.187098785392173-0.00000000001};
+     mba::point<2> lo = {24.816579309883824-0.00000000001, 60.187098785392173-0.00000000001};
     mba::point<2> hi = {24.821128063840732+0.00000000001,  60.188063892751543+0.00000000001}; 
     mba::index<2> grid = {2, 2};
     for (int i = 0; i < size_data; i += 3) {
@@ -79,7 +79,7 @@ MyInterpolator::MyInterpolator() {
         val.push_back(value);
     }
     interp = std::unique_ptr<mba::MBA<2>>(new mba::MBA<2>(lo, hi, grid, coo, val));
-    std::cout << "meni interp:sta" << std::endl;
+    std::cout << "meni interpsta ekf" << std::endl;
 }
 
 double MyInterpolator::interpolateAt(double x, double y) {

@@ -1,4 +1,2 @@
 uint32 encoder_position
-int16 SteeringSetPoint
-int16 SteeringPWM
-time time_received
+time time_received 

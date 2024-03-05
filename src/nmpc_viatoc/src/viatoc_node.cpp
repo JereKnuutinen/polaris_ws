@@ -75,7 +75,7 @@ public:
     MPCControllerNode() {
         ros::NodeHandle nh;
         // Subscribe to EKF data
-        EKF_state_estimate_sub_ = nh.subscribe("/ekf_out", 1, &MPCControllerNode::EKFCallback, this);
+        EKF_state_estimate_sub_ = nh.subscribe("/ekf_out1", 1, &MPCControllerNode::EKFCallback, this);
 
         // Publisher for control commands
         cmd_pub_ = nh.advertise<geometry_msgs::Accel>("/nmpc_out", 100);
@@ -231,10 +231,10 @@ public:
         int i,j;
 
         // // // Wait for ATV service server
-        if (!atvServiceClient_.waitForExistence(ros::Duration(10.0))) {
-            ROS_ERROR("ATV service server not available on network (VIATOC NODE) !!!!!!");
-            //return -1;
-        }
+        // if (!atvServiceClient_.waitForExistence(ros::Duration(10.0))) {
+        //     ROS_ERROR("ATV service server not available on network (VIATOC NODE) !!!!!!");
+        //     //return -1;
+        // }
         double acmd;
         double dkcmd;
         double Vcmd;
@@ -292,7 +292,7 @@ public:
                 //clock_gettime(CLOCK_MONOTONIC, &tic);
                 struct timespec start, end;
                 clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
-                nmpc->optimize(60);
+                nmpc->optimize(100);
                 auto end_chrono = std::chrono::high_resolution_clock::now();
 
                 //clock_gettime(CLOCK_MONOTONIC, &toc);
@@ -323,7 +323,10 @@ public:
                 }
                 // std::cout << "acc " << acmd << std::endl;
                 // std::cout << "dkcmd1 " << dkcmd << std::endl;
-
+                // std::cout << " Iteraatio " << std::endl;
+                // for (int iii = 0; iii < 100; iii++) {
+                //     std::cout << nmpc->x[(iii)*13 + 9] << std::endl;
+                // }
                 std::cout << "Vcmd command is " << Vcmd << std::endl;
                 std::cout << "Kcmd command is " << Kcmd << std::endl;
                 //std::cout << "Velocity command " << Vcmd << std::endl;
@@ -389,12 +392,12 @@ public:
                 srv.request.control_mode = false; // true for torque, false for speed
                 srv.request.direction = true;
 
-                if (atvServiceClient_.call(srv)) {
-                    //srv.response;
-                } else {
-                    std::cout << "error in service call (VIATOC NODE)" << std::endl;
-                    ROS_ERROR("Failed to call ATV service from VIATOC node");
-                }
+                // if (atvServiceClient_.call(srv)) {
+                //     //srv.response;
+                // } else {
+                //     std::cout << "error in service call (VIATOC NODE)" << std::endl;
+                //     ROS_ERROR("Failed to call ATV service from VIATOC node");
+                // }
 
                 new_sensor_data_available_ = false;
             }

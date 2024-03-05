@@ -93,7 +93,6 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
   double FztFL;
   double FztFL_tmp;
   double FztFR;
-  double FztFR_tmp;
   double FztRL;
   double FztRL_tmp;
   double FztRR;
@@ -126,6 +125,7 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
   double mur;
   double stgL;
   double stgR;
+  double varargout_1_tmp;
   double varargout_1_tmp_tmp;
   int i;
   int i1;
@@ -561,9 +561,10 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
     b_xk[k] = d4;
     c_varargout_1_tmp_tmp += grad_FL[k] * d;
   }
-  FztFR_tmp =
-      -(std::log(std::exp(100.0 * -((xk[2] + RpFR[2]) - fFR)) + 1.0) / 100.0);
-  FztFR = -kFR * FztFR_tmp - cFR * ((b_xk[2] + xk[5]) - b_varargout_1_tmp_tmp);
+  varargout_1_tmp_tmp =
+      std::log(std::exp(100.0 * -((xk[2] + RpFR[2]) - fFR)) + 1.0) / 100.0;
+  FztFR = -kFR * -varargout_1_tmp_tmp -
+          cFR * ((b_xk[2] + xk[5]) - b_varargout_1_tmp_tmp);
   //  + Fcmd(3)/4;
   // max([FztFL, 0]);
   b_varargout_1_tmp_tmp = 0.0;
@@ -575,8 +576,8 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
     b_varargout_1_tmp_tmp += grad_RR[k] * dotENU[k];
   }
   FztFL_tmp =
-      -(std::log(std::exp(100.0 * -((xk[2] + RpFL[2]) - fFL)) + 1.0) / 100.0);
-  FztFL = -kFL * FztFL_tmp - cFL * ((b_xk[2] + xk[5]) - c_varargout_1_tmp_tmp);
+      std::log(std::exp(100.0 * -((xk[2] + RpFL[2]) - fFL)) + 1.0) / 100.0;
+  FztFL = -kFL * -FztFL_tmp - cFL * ((b_xk[2] + xk[5]) - c_varargout_1_tmp_tmp);
   //  + Fcmd(3)/4;
   // max([FztRR, 0]);
   c_varargout_1_tmp_tmp = 0.0;
@@ -588,8 +589,8 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
     c_varargout_1_tmp_tmp += grad_RL[k] * dotENU[k];
   }
   FztRR_tmp =
-      -(std::log(std::exp(100.0 * -((xk[2] + RpRR[2]) - fRR)) + 1.0) / 100.0);
-  FztRR = -kRR * FztRR_tmp - cRR * ((b_xk[2] + xk[5]) - b_varargout_1_tmp_tmp);
+      std::log(std::exp(100.0 * -((xk[2] + RpRR[2]) - fRR)) + 1.0) / 100.0;
+  FztRR = -kRR * -FztRR_tmp - cRR * ((b_xk[2] + xk[5]) - b_varargout_1_tmp_tmp);
   d = pRL[0];
   d1 = pRL[1];
   d2 = pRL[2];
@@ -597,8 +598,8 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
     b_xk[i] = (RTemp[i] * d + RTemp[i + 3] * d1) + RTemp[i + 6] * d2;
   }
   FztRL_tmp =
-      -(std::log(std::exp(100.0 * -((xk[2] + RpRL[2]) - fRL)) + 1.0) / 100.0);
-  FztRL = -kRL * FztRL_tmp - cRL * ((b_xk[2] + xk[5]) - c_varargout_1_tmp_tmp);
+      std::log(std::exp(100.0 * -((xk[2] + RpRL[2]) - fRL)) + 1.0) / 100.0;
+  FztRL = -kRL * -FztRL_tmp - cRL * ((b_xk[2] + xk[5]) - c_varargout_1_tmp_tmp);
   //  + Fcmd(3)/4;
   // max([FztRL, 0]);
   //  Velocities for strut positions in vehicle coordinates
@@ -634,6 +635,7 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
   }
   //  velocities of strut points due to additional moment induced by
   //  the instantaneous deflection of the spring above tire radius height
+  b_xk[2] = varargout_1_tmp_tmp - h_T;
   d = pFR[0];
   d1 = pFR[1];
   d2 = pFR[2];
@@ -647,41 +649,46 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
   b_varargout_1_tmp_tmp = pRL[1];
   c_varargout_1_tmp_tmp = pRL[2];
   for (i = 0; i < 3; i++) {
-    double VuFR_tmp_tmp;
-    double d10;
     double d9;
-    d_varargout_1_tmp_tmp = PR_tmp[i];
-    e_varargout_1_tmp_tmp = d_varargout_1_tmp_tmp * d;
-    f_varargout_1_tmp_tmp = d_varargout_1_tmp_tmp * d3;
-    d9 = d_varargout_1_tmp_tmp * d6;
-    d10 = d_varargout_1_tmp_tmp * varargout_1_tmp_tmp;
-    d_varargout_1_tmp_tmp = PR_tmp[i + 3];
-    e_varargout_1_tmp_tmp += d_varargout_1_tmp_tmp * d1;
-    f_varargout_1_tmp_tmp += d_varargout_1_tmp_tmp * d4;
-    d9 += d_varargout_1_tmp_tmp * d7;
-    d10 += d_varargout_1_tmp_tmp * b_varargout_1_tmp_tmp;
-    d_varargout_1_tmp_tmp = PR_tmp[i + 6];
-    e_varargout_1_tmp_tmp += d_varargout_1_tmp_tmp * d2;
-    f_varargout_1_tmp_tmp += d_varargout_1_tmp_tmp * d5;
-    d9 += d_varargout_1_tmp_tmp * d8;
-    d10 += d_varargout_1_tmp_tmp * c_varargout_1_tmp_tmp;
-    d_varargout_1_tmp_tmp = RP[i + 6];
-    VuFR_tmp_tmp = RP[i] * 0.0 + RP[i + 3] * 0.0;
-    VuFR_tmp[i] = VuFR_tmp_tmp + d_varargout_1_tmp_tmp * FztFR_tmp;
-    d_y[i] = d10;
-    c_y[i] = d9;
-    b_y[i] = f_varargout_1_tmp_tmp;
-    y[i] = e_varargout_1_tmp_tmp;
-    VuFL_tmp[i] = VuFR_tmp_tmp + d_varargout_1_tmp_tmp * FztFL_tmp;
-    VuRR_tmp[i] = VuFR_tmp_tmp + d_varargout_1_tmp_tmp * FztRR_tmp;
-    VuRL_tmp[i] = VuFR_tmp_tmp + d_varargout_1_tmp_tmp * FztRL_tmp;
+    varargout_1_tmp = PR_tmp[i];
+    d_varargout_1_tmp_tmp = varargout_1_tmp * d;
+    e_varargout_1_tmp_tmp = varargout_1_tmp * d3;
+    f_varargout_1_tmp_tmp = varargout_1_tmp * d6;
+    d9 = varargout_1_tmp * varargout_1_tmp_tmp;
+    varargout_1_tmp = PR_tmp[i + 3];
+    d_varargout_1_tmp_tmp += varargout_1_tmp * d1;
+    e_varargout_1_tmp_tmp += varargout_1_tmp * d4;
+    f_varargout_1_tmp_tmp += varargout_1_tmp * d7;
+    d9 += varargout_1_tmp * b_varargout_1_tmp_tmp;
+    varargout_1_tmp = PR_tmp[i + 6];
+    d_varargout_1_tmp_tmp += varargout_1_tmp * d2;
+    e_varargout_1_tmp_tmp += varargout_1_tmp * d5;
+    f_varargout_1_tmp_tmp += varargout_1_tmp * d8;
+    d9 += varargout_1_tmp * c_varargout_1_tmp_tmp;
+    VuFR_tmp[i] = (RP[i] * 0.0 + RP[i + 3] * 0.0) + RP[i + 6] * b_xk[2];
+    d_y[i] = d9;
+    c_y[i] = f_varargout_1_tmp_tmp;
+    b_y[i] = e_varargout_1_tmp_tmp;
+    y[i] = d_varargout_1_tmp_tmp;
+  }
+  b_xk[2] = FztFL_tmp - h_T;
+  for (i = 0; i < 3; i++) {
+    VuFL_tmp[i] = (RP[i] * 0.0 + RP[i + 3] * 0.0) + RP[i + 6] * b_xk[2];
+  }
+  b_xk[2] = FztRR_tmp - h_T;
+  for (i = 0; i < 3; i++) {
+    VuRR_tmp[i] = (RP[i] * 0.0 + RP[i + 3] * 0.0) + RP[i + 6] * b_xk[2];
+  }
+  b_xk[2] = FztRL_tmp - h_T;
+  for (i = 0; i < 3; i++) {
+    VuRL_tmp[i] = (RP[i] * 0.0 + RP[i + 3] * 0.0) + RP[i + 6] * b_xk[2];
   }
   //  Velocities of each strut in tire-ground contact patches
-  b_varargout_1_tmp_tmp =
-      (VuFR_tmp[1] * xk[11] - VuFR_tmp[2] * xk[10]) + (y[0] + xk[3]);
-  c_varargout_1_tmp_tmp =
-      (VuFR_tmp[2] * xk[9] - VuFR_tmp[0] * xk[11]) + (y[1] + xk[4]);
   varargout_1_tmp_tmp =
+      (VuFR_tmp[1] * xk[11] - VuFR_tmp[2] * xk[10]) + (y[0] + xk[3]);
+  b_varargout_1_tmp_tmp =
+      (VuFR_tmp[2] * xk[9] - VuFR_tmp[0] * xk[11]) + (y[1] + xk[4]);
+  c_varargout_1_tmp_tmp =
       (VuFR_tmp[0] * xk[10] - VuFR_tmp[1] * xk[9]) + (y[2] + xk[5]);
   b_xk[0] = VuFL_tmp[1] * xk[11] - VuFL_tmp[2] * xk[10];
   b_xk[1] = VuFL_tmp[2] * xk[9] - VuFL_tmp[0] * xk[11];
@@ -691,8 +698,8 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
   y[2] = b_y[2] + xk[5];
   for (i = 0; i < 3; i++) {
     VgFR[i] =
-        (PR[i] * b_varargout_1_tmp_tmp + PR[i + 3] * c_varargout_1_tmp_tmp) +
-        PR[i + 6] * varargout_1_tmp_tmp;
+        (PR[i] * varargout_1_tmp_tmp + PR[i + 3] * b_varargout_1_tmp_tmp) +
+        PR[i + 6] * c_varargout_1_tmp_tmp;
     b_xk[i] += y[i];
   }
   d = b_xk[0];
@@ -720,9 +727,9 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
   //  speed
   //  compute curvature commands for left and right wheel
   //  compute left and right wheel steering angles
-  b_varargout_1_tmp_tmp = tw / 2.0 * xk[12];
-  stgL = std::atan(l * (xk[12] / (1.0 - b_varargout_1_tmp_tmp)));
-  stgR = std::atan(l * (xk[12] / (b_varargout_1_tmp_tmp + 1.0)));
+  varargout_1_tmp_tmp = tw / 2.0 * xk[12];
+  stgL = std::atan(l * (xk[12] / (1.0 - varargout_1_tmp_tmp)));
+  stgR = std::atan(l * (xk[12] / (varargout_1_tmp_tmp + 1.0)));
   //  Slip angles of each wheel
   //  to limit the side-slip angles to linear range for lateral force
   //  versus side-slip angles curve
@@ -736,8 +743,8 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
   if (std::abs(uk[2]) > 0.0) {
     //  Compute lateral forces as a function of cornering stiffness
     //  coefficient
-    b_varargout_1_tmp_tmp = xk[13] * Ca;
-    FcFR = b_varargout_1_tmp_tmp *
+    varargout_1_tmp_tmp = xk[13] * Ca;
+    FcFR = varargout_1_tmp_tmp *
            (-std::log(
                 std::exp(-std::log(
                     std::exp(10.0 * ((-rt_atan2d_snf(VgFR[1], VgFR[0]) + stgR) *
@@ -745,7 +752,7 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
                     3.7200759760208361E-44)) +
                 3.7200759760208361E-44) /
             10.0 * D2R);
-    FcFL = b_varargout_1_tmp_tmp *
+    FcFL = varargout_1_tmp_tmp *
            (-std::log(
                 std::exp(-std::log(
                     std::exp(10.0 * ((-rt_atan2d_snf(VgFL[1], VgFL[0]) + stgL) *
@@ -753,14 +760,14 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
                     3.7200759760208361E-44)) +
                 3.7200759760208361E-44) /
             10.0 * D2R);
-    FcRR = b_varargout_1_tmp_tmp *
+    FcRR = varargout_1_tmp_tmp *
            (-std::log(
                 std::exp(-std::log(
                     std::exp(10.0 * (-rt_atan2d_snf(VgRR[1], VgRR[0]) * R2D)) +
                     3.7200759760208361E-44)) +
                 3.7200759760208361E-44) /
             10.0 * D2R);
-    FcRL = b_varargout_1_tmp_tmp *
+    FcRL = varargout_1_tmp_tmp *
            (-std::log(
                 std::exp(-std::log(
                     std::exp(10.0 * (-rt_atan2d_snf(VgRL[1], VgRL[0]) * R2D)) +
@@ -777,11 +784,11 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
     } else {
       d = (xk[3] > 0.0);
     }
-    b_varargout_1_tmp_tmp = -m * g * Cr * d / 4.0;
-    FrFL = b_varargout_1_tmp_tmp;
-    FrRL = b_varargout_1_tmp_tmp;
-    FrFR = b_varargout_1_tmp_tmp;
-    FrRR = b_varargout_1_tmp_tmp;
+    varargout_1_tmp_tmp = -m * g * Cr * d / 4.0;
+    FrFL = varargout_1_tmp_tmp;
+    FrRL = varargout_1_tmp_tmp;
+    FrFR = varargout_1_tmp_tmp;
+    FrRR = varargout_1_tmp_tmp;
     //  compute the road inclination for front and rear wheels in TGC frame
     varargout_1_tmp_tmp = std::sin(-xk[8]);
     b_varargout_1_tmp_tmp = std::cos(-xk[8]);
@@ -840,7 +847,7 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
   //  compute wheel forces in body frame
   varargout_1_tmp_tmp = std::sin(stgR);
   b_varargout_1_tmp_tmp = std::cos(stgR);
-  d_varargout_1_tmp_tmp = std::sin(-gamma_FR);
+  varargout_1_tmp = std::sin(-gamma_FR);
   c_varargout_1_tmp_tmp = std::cos(-gamma_FR);
   PR_tmp[0] = b_varargout_1_tmp_tmp;
   PR_tmp[3] = -varargout_1_tmp_tmp;
@@ -862,11 +869,11 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
   }
   PR_tmp[0] = c_varargout_1_tmp_tmp;
   PR_tmp[3] = 0.0;
-  PR_tmp[6] = d_varargout_1_tmp_tmp;
+  PR_tmp[6] = varargout_1_tmp;
   PR_tmp[1] = 0.0;
   PR_tmp[4] = 1.0;
   PR_tmp[7] = 0.0;
-  PR_tmp[2] = -d_varargout_1_tmp_tmp;
+  PR_tmp[2] = -varargout_1_tmp;
   PR_tmp[5] = 0.0;
   PR_tmp[8] = c_varargout_1_tmp_tmp;
   b_xk[0] = mur * FztFR + FrFR;
@@ -886,7 +893,7 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
   }
   varargout_1_tmp_tmp = std::sin(stgL);
   b_varargout_1_tmp_tmp = std::cos(stgL);
-  d_varargout_1_tmp_tmp = std::sin(-gamma_FL);
+  varargout_1_tmp = std::sin(-gamma_FL);
   c_varargout_1_tmp_tmp = std::cos(-gamma_FL);
   PR_tmp[0] = b_varargout_1_tmp_tmp;
   PR_tmp[3] = -varargout_1_tmp_tmp;
@@ -908,11 +915,11 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
   }
   PR_tmp[0] = c_varargout_1_tmp_tmp;
   PR_tmp[3] = 0.0;
-  PR_tmp[6] = d_varargout_1_tmp_tmp;
+  PR_tmp[6] = varargout_1_tmp;
   PR_tmp[1] = 0.0;
   PR_tmp[4] = 1.0;
   PR_tmp[7] = 0.0;
-  PR_tmp[2] = -d_varargout_1_tmp_tmp;
+  PR_tmp[2] = -varargout_1_tmp;
   PR_tmp[5] = 0.0;
   PR_tmp[8] = c_varargout_1_tmp_tmp;
   b_xk[0] = mur * FztFL + FrFL;
