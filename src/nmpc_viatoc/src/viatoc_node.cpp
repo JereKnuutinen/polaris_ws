@@ -232,7 +232,7 @@ public:
             // dE = dotENU(1); dN = dotENU(2); dU = dotENU(3);
 
             // Process and store sensor data (e.g., state estimation)
-            //ROS_INFO("Received Odometry message:\n%s", msg->header.frame_id.c_str());
+            ROS_INFO("Received Odometry message:\n%s", msg->header.frame_id.c_str());
             // Extract relevant information from the Odometry message
             // For old model
             double x = msg->pose.pose.position.x;
@@ -276,11 +276,11 @@ public:
             //double y_quat = msg->pose.pose.orientation.y;
             //double z_quat = msg->pose.pose.orientation.z;
             //double w_quat = msg->pose.pose.orientation.w;
-
             double K = msg->twist.covariance[7];
-            double lla0_lat_ = msg->twist.covariance[1];
-            double lla0_lon_ = msg->twist.covariance[2];
-            double lla0_at_ = msg->twist.covariance[3];
+            
+            double lla0_lat_ = msg->twist.covariance[13]; //msg->twist.covariance[1];
+            double lla0_lon_ = msg->twist.covariance[14]; //msg->twist.covariance[2];
+            double lla0_at_ = msg->twist.covariance[15]; //msg->twist.covariance[3];
             
             double distance = 1.37;
         //[x, y, z, psi, u, u_lowpass, K, K_lowpass, roll, p, pitch, q]
@@ -380,7 +380,7 @@ public:
                 long seconds = end.tv_sec - start.tv_sec;
                 long nanoseconds = end.tv_nsec - start.tv_nsec;
                 double elapsed = seconds + nanoseconds*1e-9;
-                std::cout << "Time (clock_gettime) (s) " << elapsed << std::endl;
+                //std::cout << "Time (clock_gettime) (s) " << elapsed << std::endl;
                 std::cout << "Duration loop(Chrono CPU Time): " << std::chrono::duration<double, std::milli>(end_chrono-start_chrono).count() << "ms"<< std::endl;
                 //std::cout << " after optimize nmpc" << std::endl;
                 acmd = nmpc->u[0];
@@ -497,7 +497,7 @@ private:
     //std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     // For NMPC that does not have w: [x, y, z, psi, u, u_lowpass, K, K_lowpass, roll, p, pitch, q]
-    std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     //NMPCProblem* nmpc;
     std::shared_ptr<NMPCProblem> nmpc;
