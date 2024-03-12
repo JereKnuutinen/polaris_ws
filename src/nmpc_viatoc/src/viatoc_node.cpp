@@ -59,7 +59,7 @@ char getch()
 
     if(rv == -1)
         ROS_ERROR("select");
-    else if(rv == 0)
+    else if(rv == 0) 
         ROS_INFO("no_key_pressed");
     else
         read(filedesc, &buff, len );
@@ -155,7 +155,76 @@ public:
     //     new_sensor_data_available_ = true;
     // }
 
-    void EKFCallback(const nav_msgs::Odometry::ConstPtr& msg) {
+    // void EKFCallback(const nav_msgs::Odometry::ConstPtr& msg) {
+    //         // body to global (CG) transformation
+    //         // C = Rz(yaw)*Ry(pitch)*Rx(roll);
+    //         // compute velocities in inertial frame
+    //         // dotENU = C*[u; v; w];
+    //         // dE = dotENU(1); dN = dotENU(2); dU = dotENU(3);
+
+    //         // Process and store sensor data (e.g., state estimation)
+    //         ROS_INFO("Received Odometry message:\n%s", msg->header.frame_id.c_str());
+    //         // Extract relevant information from the Odometry message
+    //         // For old model
+    //         double x = msg->pose.pose.position.x;
+    //         double y = msg->pose.pose.position.y;
+    //         double z = msg->pose.pose.position.z;
+    //         double l2 = 1.83/2;
+    //         double h2 = 0.8767;
+
+    //         // std::cout <<"x " << msg->pose.pose.position.x << std::endl;
+    //         // std::cout <<"y " << msg->pose.pose.position.y << std::endl;
+    //         // std::cout <<"z " << msg->pose.pose.position.z << std::endl;
+
+    //         double u = msg->twist.twist.linear.x;
+    //         double v = msg->twist.twist.linear.y;
+    //         double w = msg->twist.twist.linear.z;
+
+    //         double V = u; //sqrt(u*u + v*v);
+
+    //         double p = msg->twist.twist.angular.x; // roll_rate
+    //         double q = msg->twist.twist.angular.y; // pitch_rate
+    //         double r = msg->twist.twist.angular.z; // yaw rate
+
+    //         double psi = msg->twist.covariance[6];
+    //         //std::cout << psi << std::endl;
+    //         double roll = msg->twist.covariance[4];
+    //         double pitch = msg->twist.covariance[5];
+
+    //         double x_rear = x - h2*(sin(psi)*sin(roll) + cos(psi)*cos(roll)*sin(pitch)) - l2*cos(pitch)*cos(psi);
+    //         double y_rear = y + h2*(cos(psi)*sin(roll) - cos(roll)*sin(pitch)*sin(psi)) - l2*cos(pitch)*sin(psi);
+    //         double z_rear =  z + l2*sin(pitch) - h2*cos(pitch)*cos(roll);
+
+    //         // compute z_dot in inertial frame
+    //         double z_dot = w*cos(pitch)*cos(roll) - u*sin(pitch) + v*cos(pitch)*sin(roll);
+
+    //         // Use psi, roll and pitch to calculate derivatives of angles from angle rates
+    //         double yaw_dot   = (q*sin(roll) + r*cos(roll))/cos(pitch);
+    //         double roll_dot = (q*cos(roll) - r*sin(roll));
+    //         double pitch_dot = yaw_dot*sin(pitch) + p;
+
+    //         double x_quat = msg->pose.pose.orientation.x;
+    //         double y_quat = msg->pose.pose.orientation.y;
+    //         double z_quat = msg->pose.pose.orientation.z;
+    //         double w_quat = msg->pose.pose.orientation.w;
+
+    //         double K = msg->twist.covariance[7];
+    //         double lla0_lat_ = msg->twist.covariance[1];
+    //         double lla0_lon_ = msg->twist.covariance[2];
+    //         double lla0_at_ = msg->twist.covariance[3];
+            
+    //         double distance = 1.37;
+    //     //[x, y, z, psi, u, u_lowpass, K, K_lowpass, w, roll, p, pitch, q]
+    //         EKF_state_ = {x, y, z, psi, V, V, K, K, w, roll, p, pitch, q};
+    //         //std::cout << "state: " << std::endl;
+    //         //for (auto it = EKF_state_.begin(); it != EKF_state_.end(); ++it)
+    //         //    std::cout << std::setprecision(15) << *it << std::endl;
+    //         lla0_ = {lla0_lat_, lla0_lon_, lla0_at_};
+    //         // Set the flag to indicate new sensor data is available
+    //         new_sensor_data_available_ = true;
+    //     }
+
+        void EKFCallback(const nav_msgs::Odometry::ConstPtr& msg) {
             // body to global (CG) transformation
             // C = Rz(yaw)*Ry(pitch)*Rx(roll);
             // compute velocities in inertial frame
@@ -163,7 +232,7 @@ public:
             // dE = dotENU(1); dN = dotENU(2); dU = dotENU(3);
 
             // Process and store sensor data (e.g., state estimation)
-            ROS_INFO("Received Odometry message:\n%s", msg->header.frame_id.c_str());
+            //ROS_INFO("Received Odometry message:\n%s", msg->header.frame_id.c_str());
             // Extract relevant information from the Odometry message
             // For old model
             double x = msg->pose.pose.position.x;
@@ -191,22 +260,22 @@ public:
             double roll = msg->twist.covariance[4];
             double pitch = msg->twist.covariance[5];
 
-            double x_rear = x - h2*(sin(psi)*sin(roll) + cos(psi)*cos(roll)*sin(pitch)) - l2*cos(pitch)*cos(psi);
-            double y_rear = y + h2*(cos(psi)*sin(roll) - cos(roll)*sin(pitch)*sin(psi)) - l2*cos(pitch)*sin(psi);
-            double z_rear =  z + l2*sin(pitch) - h2*cos(pitch)*cos(roll);
+            //double x_rear = x - h2*(sin(psi)*sin(roll) + cos(psi)*cos(roll)*sin(pitch)) - l2*cos(pitch)*cos(psi);
+            //double y_rear = y + h2*(cos(psi)*sin(roll) - cos(roll)*sin(pitch)*sin(psi)) - l2*cos(pitch)*sin(psi);
+            //double z_rear =  z + l2*sin(pitch) - h2*cos(pitch)*cos(roll);
 
             // compute z_dot in inertial frame
-            double z_dot = w*cos(pitch)*cos(roll) - u*sin(pitch) + v*cos(pitch)*sin(roll);
+            //double z_dot = w*cos(pitch)*cos(roll) - u*sin(pitch) + v*cos(pitch)*sin(roll);
 
             // Use psi, roll and pitch to calculate derivatives of angles from angle rates
-            double yaw_dot   = (q*sin(roll) + r*cos(roll))/cos(pitch);
-            double roll_dot = (q*cos(roll) - r*sin(roll));
-            double pitch_dot = yaw_dot*sin(pitch) + p;
+            //double yaw_dot   = (q*sin(roll) + r*cos(roll))/cos(pitch);
+            //double roll_dot = (q*cos(roll) - r*sin(roll));
+            //double pitch_dot = yaw_dot*sin(pitch) + p;
 
-            double x_quat = msg->pose.pose.orientation.x;
-            double y_quat = msg->pose.pose.orientation.y;
-            double z_quat = msg->pose.pose.orientation.z;
-            double w_quat = msg->pose.pose.orientation.w;
+            //double x_quat = msg->pose.pose.orientation.x;
+            //double y_quat = msg->pose.pose.orientation.y;
+            //double z_quat = msg->pose.pose.orientation.z;
+            //double w_quat = msg->pose.pose.orientation.w;
 
             double K = msg->twist.covariance[7];
             double lla0_lat_ = msg->twist.covariance[1];
@@ -214,8 +283,8 @@ public:
             double lla0_at_ = msg->twist.covariance[3];
             
             double distance = 1.37;
-        //[x, y, z, psi, u, u_lowpass, K, K_lowpass, w, roll, p, pitch, q]
-            EKF_state_ = {x, y, z, psi, V, V, K, K, w, roll, p, pitch, q};
+        //[x, y, z, psi, u, u_lowpass, K, K_lowpass, roll, p, pitch, q]
+            EKF_state_ = {x, y, z, psi, V, V, K, K, roll, p, pitch, q};
             //std::cout << "state: " << std::endl;
             //for (auto it = EKF_state_.begin(); it != EKF_state_.end(); ++it)
             //    std::cout << std::setprecision(15) << *it << std::endl;
@@ -223,7 +292,6 @@ public:
             // Set the flag to indicate new sensor data is available
             new_sensor_data_available_ = true;
         }
-
 
     void runMPCControl() {
         //*ptr = (void *) nmpc;
@@ -243,18 +311,19 @@ public:
 
         // Thisng related to keyboard stuff /////////////////
         int init_or_opt = 0; // zero for zero inputs and 1 for opt inputs
-
+        ros::WallTime start_2, end_2;
         /////////////////////////////////////////////////////
         //atv_can::DriveService srv;
         while (ros::ok()) {
             //Check if new sensor data has arrived
             if (new_sensor_data_available_) {
+                  //tic();
                 ros::WallTime start_, end_;
                 auto start_chrono = std::chrono::high_resolution_clock::now();
                 start_ = ros::WallTime::now();
+                start_2 = ros::WallTime::now();
                 // Check if the initialization is done
                 if (!is_initialization_done_) {
-                    //tic();
                     std::cout << "initialize nmpc (VIATOC NODE)" << std::endl;
                     initializeMPC(EKF_state_);
                     is_initialization_done_ = true;
@@ -292,16 +361,19 @@ public:
                 //clock_gettime(CLOCK_MONOTONIC, &tic);
                 struct timespec start, end;
                 clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
-                nmpc->optimize(100);
+                nmpc->optimize(50);
                 auto end_chrono = std::chrono::high_resolution_clock::now();
 
                 //clock_gettime(CLOCK_MONOTONIC, &toc);
                 clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end);
                 end_ = ros::WallTime::now();
-    
+                end_2 = ros::WallTime::now();
                 // print results
                 double execution_time = (end_ - start_).toNSec() * 1e-9;
+                double execution_time2 = (end_2 - start_2).toNSec() * 1e-9;
                 std::cout << "Time (ROS walltime) (s)" << execution_time << std::endl;
+                std::cout << "Time (ROS walltime2) (s)" << execution_time2<< std::endl;
+
                 //toc();
                 //std::cout << "Aika " << (toc.tv_sec - tic.tv_sec) + (toc.tv_nsec - tic.tv_nsec) / 1.0e9 << std::endl;
                 // Calculate the elapsed time
@@ -315,8 +387,8 @@ public:
                 dkcmd = nmpc->u[1];
                 // Take values from second step. since the first corrensponds to current state
                 if (init_or_opt == 1){
-                    Vcmd = nmpc->x[17];
-                    Kcmd = nmpc->x[19];
+                    Vcmd = nmpc->x[16];
+                    Kcmd = nmpc->x[18];
                 } else {
                     Vcmd = 0.0;
                     Kcmd = 0.0;
@@ -325,7 +397,7 @@ public:
                 // std::cout << "dkcmd1 " << dkcmd << std::endl;
                 // std::cout << " Iteraatio " << std::endl;
                 // for (int iii = 0; iii < 100; iii++) {
-                //     std::cout << nmpc->x[(iii)*13 + 9] << std::endl;
+                //     std::cout << nmpc->x[(iii)*12 + 2] << std::endl;
                 // }
                 std::cout << "Vcmd command is " << Vcmd << std::endl;
                 std::cout << "Kcmd command is " << Kcmd << std::endl;
@@ -343,20 +415,20 @@ public:
 
                 nav_msgs::Odometry control_state_msg;
                 control_state_msg.header.stamp = ros::Time::now();
-                control_state_msg.pose.pose.position.x =  nmpc->x[13]; // x
-                control_state_msg.pose.pose.position.y =  nmpc->x[14]; // y
-                control_state_msg.pose.pose.position.z =  nmpc->x[15]; // z
+                control_state_msg.pose.pose.position.x =  nmpc->x[12]; // x
+                control_state_msg.pose.pose.position.y =  nmpc->x[13]; // y
+                control_state_msg.pose.pose.position.z =  nmpc->x[14]; // z
 
-                control_state_msg.twist.twist.linear.x =  nmpc->x[17]; // Forward velocity
-                control_state_msg.twist.twist.linear.z =  nmpc->x[21]; // Up velocity
+                control_state_msg.twist.twist.linear.x =  nmpc->x[16]; // Forward velocity
+                //control_state_msg.twist.twist.linear.z =  nmpc->x[20]; // Up velocity
 
-                control_state_msg.pose.pose.orientation.x = nmpc->x[22]; // roll
-                control_state_msg.pose.pose.orientation.y = nmpc->x[24]; // pitch
-                control_state_msg.pose.pose.orientation.z = nmpc->x[16]; // heading
+                control_state_msg.pose.pose.orientation.x = nmpc->x[20]; // roll
+                control_state_msg.pose.pose.orientation.y = nmpc->x[23]; // pitch
+                control_state_msg.pose.pose.orientation.z = nmpc->x[15]; // heading
 
-                control_state_msg.twist.twist.angular.x = nmpc->x[23]; // roll rate 
-                control_state_msg.twist.twist.angular.y = nmpc->x[25]; //  pitch rate
-                control_state_msg.twist.twist.angular.z = nmpc->x[19]; //  curvature
+                control_state_msg.twist.twist.angular.x = nmpc->x[22]; // roll rate 
+                control_state_msg.twist.twist.angular.y = nmpc->x[24]; //  pitch rate
+                control_state_msg.twist.twist.angular.z = nmpc->x[18]; //  curvature
 
                 // Put also lowpass states to the cov message
 
@@ -367,14 +439,15 @@ public:
                 control_state_msg.twist.covariance[4] = EKF_state_[3]; // psi
                 control_state_msg.twist.covariance[5] = EKF_state_[4]; // v
                 control_state_msg.twist.covariance[6] = EKF_state_[6]; // k
-                control_state_msg.twist.covariance[7] = EKF_state_[8]; // w
-                control_state_msg.twist.covariance[8] = EKF_state_[9]; // roll
-                control_state_msg.twist.covariance[9] = EKF_state_[10]; // roll rate
-                control_state_msg.twist.covariance[10] = EKF_state_[11]; // pitch
-                control_state_msg.twist.covariance[11] = EKF_state_[12]; // pitch rate
+                control_state_msg.twist.covariance[8] = EKF_state_[8]; // roll
+                control_state_msg.twist.covariance[9] = EKF_state_[9]; // roll rate
+                control_state_msg.twist.covariance[10] = EKF_state_[10]; // pitch
+                control_state_msg.twist.covariance[11] = EKF_state_[11]; // pitch rate
 
-                control_state_msg.twist.covariance[12] = nmpc->x[18]; // velocity Low pass state of the controller
-                control_state_msg.twist.covariance[13] = nmpc->x[20];// curvature Low pass state of the controller
+                control_state_msg.twist.covariance[12] = nmpc->x[17]; // velocity Low pass state of the controller
+                control_state_msg.twist.covariance[13] = nmpc->x[19];// curvature Low pass state of the controller
+                control_state_msg.twist.covariance[14] = elapsed;// 
+                control_state_msg.twist.covariance[15] = execution_time2;// 
                 control_state_pub_.publish(control_state_msg);
 
                 // Publish the Accel message
@@ -421,7 +494,11 @@ private:
     //std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     // For new NMPC: [x, y, z, psi, u, u_lowpass, K, K_lowpass, w, roll, p, pitch, q]
-    std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    //std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+    // For NMPC that does not have w: [x, y, z, psi, u, u_lowpass, K, K_lowpass, roll, p, pitch, q]
+    std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
     //NMPCProblem* nmpc;
     std::shared_ptr<NMPCProblem> nmpc;
     //std::shared_ptr<NMPCProblem> nmpc;
