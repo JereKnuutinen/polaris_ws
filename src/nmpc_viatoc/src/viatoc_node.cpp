@@ -18,6 +18,20 @@
 #include <termios.h>
 #include <cstdio>
 #include <iostream>
+#include <time.h>
+#include <sys/time.h>
+double get_wall_time(){
+    struct timeval time;
+    if (gettimeofday(&time,NULL)){
+        //  Handle error
+        return 0;
+    }
+    return (double)time.tv_sec + (double)time.tv_usec * .000001;
+}
+double get_cpu_time(){
+    return (double)clock() / CLOCKS_PER_SEC;
+}
+
 // void tic(int mode=0) {
 //     static std::chrono::_V2::system_clock::time_point t_start;
     
@@ -329,7 +343,10 @@ public:
                     is_initialization_done_ = true;
                     //toc();
                 }
-
+                // Comment these
+                // nmpc->shiftControlsStates();
+                // nmpc->u[ nmpc->numControls*nmpc->numSteps-1] = 0;
+                // nmpc->u[ nmpc->numControls*nmpc->numSteps-2] = 0;
                 // Set current state
                 for(i = 0; i < nmpc->numStates; i++)
                     nmpc->x[i] = EKF_state_[i];
@@ -338,9 +355,9 @@ public:
 
                 // set x_ref
                 for(i = 0; i < nmpc->numStates*nmpc->numSteps; i++) {
+                    //std::cout << i % x_ref_.size() << std::endl;
                     nmpc->x_ref[i] = x_ref_[i % x_ref_.size()];
                 }
-
                 // set u_ref
                 for(i = 0; i < nmpc->numControls*nmpc->numSteps; i++) {
                     nmpc->u_ref[i] = u_ref_[i % u_ref_.size()];
@@ -361,26 +378,34 @@ public:
                 //clock_gettime(CLOCK_MONOTONIC, &tic);
                 struct timespec start, end;
                 clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+                std::clock_t startcputime = std::clock();
+                double wall0 = get_wall_time();
+                double cpu0  = get_cpu_time();
                 nmpc->optimize(50);
+                double wall1 = get_wall_time();
+                double cpu1  = get_cpu_time();
                 auto end_chrono = std::chrono::high_resolution_clock::now();
-
+                double cpu_duration = (std::clock() - startcputime) / (double)CLOCKS_PER_SEC;
                 //clock_gettime(CLOCK_MONOTONIC, &toc);
                 clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end);
                 end_ = ros::WallTime::now();
                 end_2 = ros::WallTime::now();
                 // print results
-                double execution_time = (end_ - start_).toNSec() * 1e-9;
-                double execution_time2 = (end_2 - start_2).toNSec() * 1e-9;
-                std::cout << "Time (ROS walltime) (s)" << execution_time << std::endl;
+                double execution_time = (end_ - start_).toNSec() * 1.0e-9;
+                double execution_time2 = (end_2 - start_2).toSec(); //toNSec() * 1e-9;
+                std::cout << "std::clock Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
+                // std::cout << "gettimeofday Wall Time = " << wall1 - wall0 << std::endl;
+                //std::cout << "gettimeofday CPU Time  = " << cpu1  - cpu0  << std::endl;
+                std::cout << "Time (ROS walltime) 1.0 (s)" << execution_time << std::endl;
                 std::cout << "Time (ROS walltime2) (s)" << execution_time2<< std::endl;
 
                 //toc();
-                //std::cout << "Aika " << (toc.tv_sec - tic.tv_sec) + (toc.tv_nsec - tic.tv_nsec) / 1.0e9 << std::endl;
+                //std::cout << "Aika clock_gettime " << (toc.tv_sec - tic.tv_sec) + (toc.tv_nsec - tic.tv_nsec) / 1.0e9 << std::endl;
                 // Calculate the elapsed time
                 long seconds = end.tv_sec - start.tv_sec;
                 long nanoseconds = end.tv_nsec - start.tv_nsec;
-                double elapsed = seconds + nanoseconds*1e-9;
-                //std::cout << "Time (clock_gettime) (s) " << elapsed << std::endl;
+                double elapsed = seconds + nanoseconds*0.000000001; //1.0e-9;
+                std::cout << "Time (clock_gettime) (s) " << elapsed << std::endl;
                 std::cout << "Duration loop(Chrono CPU Time): " << std::chrono::duration<double, std::milli>(end_chrono-start_chrono).count() << "ms"<< std::endl;
                 //std::cout << " after optimize nmpc" << std::endl;
                 acmd = nmpc->u[0];
@@ -517,11 +542,15 @@ private:
         }
 
         // Set initial state trajectory
-        for (int j = 0; j < nmpc->numSteps; j++) {
+        for (int j = 0; j < nmpc->numSteps+1; j++) {
             for (int i = 0; i < nmpc->numStates; i++) {
+                //std::cout << i % x_ref_.size() << std::endl;
                 nmpc->x[j * nmpc->numStates + i] = EKF_state_[i % x_ref_.size()]; 
             }
         }
+
+        //for(int ii = 0; ii < nmpc->numStates*(nmpc->numSteps+1); ii++)
+         //  std::cout << nmpc->x[ii] << std::endl;
     }
 
 };

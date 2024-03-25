@@ -338,6 +338,8 @@ void aug_dynamic_model_anonFcn1(const double uk[3], const double xk[14],
   double dfyRR2;
   coder::b_enu2lla(P_FR, lla0, P_RL_dy);
   fFR = int_at(P_FR_LLA[1], P_FR_LLA[0]);
+  //std::printf("FR posi: %f.\n", fFR);
+  //std::fflush(stdout);
   fRR = int_at(P_RR_LLA[1], P_RR_LLA[0]);
   fFL = int_at(P_FL_LLA[1], P_FL_LLA[0]);
   fRL = int_at(P_RL_LLA[1], P_RL_LLA[0]);
