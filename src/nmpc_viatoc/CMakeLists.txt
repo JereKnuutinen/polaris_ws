@@ -15,10 +15,14 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   nav_msgs
 )
-
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-
+# find_package(OpenMP REQUIRED)
+# ## System dependencies are found with CMake's conventions
+# # find_package(Boost REQUIRED COMPONENTS system)
+# if(OPENMP_FOUND)
+#   message(STATUS "OPENMP FOUND1")
+#   set(OpenMP_FLAGS ${OpenMP_CXX_FLAGS})  # or if you use C: ${OpenMP_C_FLAGS}
+#   set(OpenMP_LIBS gomp)
+# endif()
 
 
 ###################################
@@ -38,6 +42,7 @@ catkin_package(
   roscpp
   std_msgs
   INCLUDE_DIRS include
+  
 )
 
 ###########
@@ -49,14 +54,18 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
-  /home/mpc/VIATOC
+  #/home/mpc/VIATOC
   /home/mpc/VIATOC/src/solver_cpp              # Add the VIATOC directory to the include path
   #/home/mpc/VIATOC/examples/kinDynGeneratedCode_final_model_increased_mass_pitch_ground 
   #/home/mpc/VIATOC/examples/Paper_model_ROS_Kl_1
   #/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2
   #/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_longer_path
-  /home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w
-  #/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w_vakola
+
+
+  #/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w
+  /home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w_vakola_NLS_new_path_VC_AOD
+
+
   #/home/mpc/VIATOC/examples/kinDynGeneratedCode_map_korjattu_path_tracking_fullmodel_ac_dynamics_roll_operator
   /home/mpc/Desktop/mba/mba                 # Add the mba directory to the include path
   /home/mpc/Desktop/lonlat2ENU
@@ -68,14 +77,20 @@ add_executable(viatoc_node src/viatoc_node.cpp
 #/home/mpc/VIATOC/examples/kinDynGeneratedCode_final_model_increased_mass_pitch_ground/NMPCProblem.cpp
 #/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2/NMPCProblem.cpp
 #/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_longer_path/NMPCProblem.cpp
-/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w/NMPCProblem.cpp
-#/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w_vakola/NMPCProblem.cpp
+
+#/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w/NMPCProblem.cpp
+/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w_vakola_NLS_new_path_VC_AOD/NMPCProblem.cpp
+
+
 #/home/mpc/VIATOC/examples/Paper_model_ROS_Kl_1/NMPCProblem.cpp
 #/home/mpc/VIATOC/examples/kinDynGeneratedCode_map_korjattu_path_tracking_fullmodel_ac_dynamics_roll_operator/NMPCProblem.cpp
 /home/mpc/VIATOC/src/solver_cpp/nmpc.cpp
 /home/mpc/VIATOC/src/solver_cpp/solver.cpp
 /home/mpc/VIATOC/src/solver_cpp/projection.cpp
 )
+#add_dependencies(viatoc_node ${catkin_EXPORTED_TARGETS})
+#target_link_libraries(viatoc_node ${catkin_LIBRARIES} ${OpenMP_LIBS})
+
 target_link_libraries(viatoc_node ${catkin_LIBRARIES})
 
 ## Rename C++ executable without prefix

@@ -246,7 +246,8 @@ public:
             // dE = dotENU(1); dN = dotENU(2); dU = dotENU(3);
 
             // Process and store sensor data (e.g., state estimation)
-            ROS_INFO("Received Odometry message:\n%s", msg->header.frame_id.c_str());
+            //ROS_INFO("Received Odometry message:\n%s", msg->header.frame_id.c_str());
+            std::cout << "call back processing" << std::endl;
             // Extract relevant information from the Odometry message
             // For old model
             double x = msg->pose.pose.position.x;
@@ -312,7 +313,7 @@ public:
         //set initial control trajectory
         int i,j;
 
-        // // // Wait for ATV service server
+        // // // // Wait for ATV service server
         // if (!atvServiceClient_.waitForExistence(ros::Duration(10.0))) {
         //     ROS_ERROR("ATV service server not available on network (VIATOC NODE) !!!!!!");
         //     //return -1;
@@ -336,6 +337,7 @@ public:
                 auto start_chrono = std::chrono::high_resolution_clock::now();
                 start_ = ros::WallTime::now();
                 start_2 = ros::WallTime::now();
+                std::clock_t startcputime = std::clock();
                 // Check if the initialization is done
                 if (!is_initialization_done_) {
                     std::cout << "initialize nmpc (VIATOC NODE)" << std::endl;
@@ -348,6 +350,10 @@ public:
                 // nmpc->u[ nmpc->numControls*nmpc->numSteps-1] = 0;
                 // nmpc->u[ nmpc->numControls*nmpc->numSteps-2] = 0;
                 // Set current state
+                // std::cout << "current state " << std::endl;
+                // for(i = 0; i < 12; i++)
+                //     std::cout << EKF_state_[i] << std::endl;
+
                 for(i = 0; i < nmpc->numStates; i++)
                     nmpc->x[i] = EKF_state_[i];
 
@@ -376,12 +382,20 @@ public:
                 //std::cout << "printtaapi " << c << std::endl;
                 //struct timespec tic, toc; 
                 //clock_gettime(CLOCK_MONOTONIC, &tic);
+                double duration_clock;
+                std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
+
                 struct timespec start, end;
                 clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
-                std::clock_t startcputime = std::clock();
+                //std::clock_t startcputime = std::clock();
                 double wall0 = get_wall_time();
                 double cpu0  = get_cpu_time();
+
+                // Optimize nmpc
                 nmpc->optimize(50);
+
+                std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
+
                 double wall1 = get_wall_time();
                 double cpu1  = get_cpu_time();
                 auto end_chrono = std::chrono::high_resolution_clock::now();
@@ -393,11 +407,11 @@ public:
                 // print results
                 double execution_time = (end_ - start_).toNSec() * 1.0e-9;
                 double execution_time2 = (end_2 - start_2).toSec(); //toNSec() * 1e-9;
-                std::cout << "std::clock Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
-                // std::cout << "gettimeofday Wall Time = " << wall1 - wall0 << std::endl;
+                //std::cout << "std::clock Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
+                //std::cout << "gettimeofday Wall Time = " << wall1 - wall0 << std::endl;
                 //std::cout << "gettimeofday CPU Time  = " << cpu1  - cpu0  << std::endl;
-                std::cout << "Time (ROS walltime) 1.0 (s)" << execution_time << std::endl;
-                std::cout << "Time (ROS walltime2) (s)" << execution_time2<< std::endl;
+                std::cout << "Time (ROS walltime) 1.0 (s) " << execution_time << std::endl;
+                std::cout << "Time (ROS walltime2) (s) " << execution_time2<< std::endl;
 
                 //toc();
                 //std::cout << "Aika clock_gettime " << (toc.tv_sec - tic.tv_sec) + (toc.tv_nsec - tic.tv_nsec) / 1.0e9 << std::endl;
@@ -407,6 +421,8 @@ public:
                 double elapsed = seconds + nanoseconds*0.000000001; //1.0e-9;
                 std::cout << "Time (clock_gettime) (s) " << elapsed << std::endl;
                 std::cout << "Duration loop(Chrono CPU Time): " << std::chrono::duration<double, std::milli>(end_chrono-start_chrono).count() << "ms"<< std::endl;
+                std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+                std::cout << "It took me " << time_span.count() << " seconds."<< std::endl;
                 //std::cout << " after optimize nmpc" << std::endl;
                 acmd = nmpc->u[0];
                 dkcmd = nmpc->u[1];
@@ -422,7 +438,7 @@ public:
                 // std::cout << "dkcmd1 " << dkcmd << std::endl;
                 // std::cout << " Iteraatio " << std::endl;
                 // for (int iii = 0; iii < 100; iii++) {
-                //     std::cout << nmpc->x[(iii)*12 + 2] << std::endl;
+                //     std::cout << nmpc->x[(iii)*12 + 8] << std::endl;
                 // }
                 std::cout << "Vcmd command is " << Vcmd << std::endl;
                 std::cout << "Kcmd command is " << Kcmd << std::endl;
@@ -499,6 +515,7 @@ public:
 
                 new_sensor_data_available_ = false;
             }
+            //std::cout << "main loop pyorii " << std::endl;
             ros::spinOnce();
         }
     }
@@ -522,7 +539,7 @@ private:
     //std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     // For NMPC that does not have w: [x, y, z, psi, u, u_lowpass, K, K_lowpass, roll, p, pitch, q]
-    std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     //NMPCProblem* nmpc;
     std::shared_ptr<NMPCProblem> nmpc;
