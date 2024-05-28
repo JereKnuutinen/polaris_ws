@@ -427,9 +427,12 @@ public:
                 acmd = nmpc->u[0];
                 dkcmd = nmpc->u[1];
                 // Take values from second step. since the first corrensponds to current state
+                //std::cout << "Vcmd command is " << nmpc->x[16] << std::endl;
+                //std::cout << "Kcmd command is " << nmpc->x[18] << std::endl;
                 if (init_or_opt == 1){
                     Vcmd = nmpc->x[16];
                     Kcmd = nmpc->x[18];
+
                 } else {
                     Vcmd = 0.0;
                     Kcmd = 0.0;
