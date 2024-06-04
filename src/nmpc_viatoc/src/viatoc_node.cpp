@@ -354,8 +354,10 @@ public:
                 // for(i = 0; i < 12; i++)
                 //     std::cout << EKF_state_[i] << std::endl;
 
-                for(i = 0; i < nmpc->numStates; i++)
+                for(i = 0; i < nmpc->numStates; i++) {
                     nmpc->x[i] = EKF_state_[i];
+                }
+                
 
                 //
 
@@ -379,6 +381,9 @@ public:
                 if (c == 'i') {
                     init_or_opt = 0;
                 }
+                // for(i = 0; i < nmpc->numSteps; i++) {
+                // printf("pred pitch x before %d %f \n", i, nmpc->x[i*12 + 10]);
+                // }
                 //std::cout << "printtaapi " << c << std::endl;
                 //struct timespec tic, toc; 
                 //clock_gettime(CLOCK_MONOTONIC, &tic);
@@ -390,39 +395,57 @@ public:
                 //std::clock_t startcputime = std::clock();
                 double wall0 = get_wall_time();
                 double cpu0  = get_cpu_time();
+                //https://en.cppreference.com/w/cpp/chrono
+                const auto start_new_chrono{std::chrono::steady_clock::now()};
 
-                // Optimize nmpc
+
+
+                ////////// Optimize nmpc //////////////////
                 nmpc->optimize(50);
 
-                std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
 
+
+                const auto end_new_chrono{std::chrono::steady_clock::now()};
+                const std::chrono::duration<double> elapsed_seconds_new_chrono{end_new_chrono - start_new_chrono};
+                // for(i = 0; i < nmpc->numSteps; i++) {
+                //     printf("pred pitch x  after %d %f \n", i, nmpc->x[i*12 + 10]);
+                // }
+                std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
                 double wall1 = get_wall_time();
                 double cpu1  = get_cpu_time();
                 auto end_chrono = std::chrono::high_resolution_clock::now();
                 double cpu_duration = (std::clock() - startcputime) / (double)CLOCKS_PER_SEC;
                 //clock_gettime(CLOCK_MONOTONIC, &toc);
                 clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end);
+                // https://answers.ros.org/question/411217/roswalltime-differs-from-chronoclock/
+                // https://answers.ros.org/question/166286/measure-codenode-running-time/
                 end_ = ros::WallTime::now();
                 end_2 = ros::WallTime::now();
                 // print results
                 double execution_time = (end_ - start_).toNSec() * 1.0e-9;
                 double execution_time2 = (end_2 - start_2).toSec(); //toNSec() * 1e-9;
-                //std::cout << "std::clock Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
-                //std::cout << "gettimeofday Wall Time = " << wall1 - wall0 << std::endl;
-                //std::cout << "gettimeofday CPU Time  = " << cpu1  - cpu0  << std::endl;
+                std::cout << "New chrono " << elapsed_seconds_new_chrono.count() << std::endl;
+                std::cout << "std::clock Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
+                std::cout << "gettimeofday Wall Time = " << wall1 - wall0 << std::endl;
+                std::cout << "gettimeofday CPU Time  = " << cpu1  - cpu0  << std::endl;
                 std::cout << "Time (ROS walltime) 1.0 (s) " << execution_time << std::endl;
                 std::cout << "Time (ROS walltime2) (s) " << execution_time2<< std::endl;
-
                 //toc();
                 //std::cout << "Aika clock_gettime " << (toc.tv_sec - tic.tv_sec) + (toc.tv_nsec - tic.tv_nsec) / 1.0e9 << std::endl;
                 // Calculate the elapsed time
                 long seconds = end.tv_sec - start.tv_sec;
                 long nanoseconds = end.tv_nsec - start.tv_nsec;
+                std::cout << "seconds " << seconds << std::endl;
+                 std::cout << "nanoseconds " << nanoseconds << std::endl;
                 double elapsed = seconds + nanoseconds*0.000000001; //1.0e-9;
                 std::cout << "Time (clock_gettime) (s) " << elapsed << std::endl;
                 std::cout << "Duration loop(Chrono CPU Time): " << std::chrono::duration<double, std::milli>(end_chrono-start_chrono).count() << "ms"<< std::endl;
                 std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+                // https://cplusplus.com/reference/chrono/high_resolution_clock/now/
                 std::cout << "It took me " << time_span.count() << " seconds."<< std::endl;
+
+
+
                 //std::cout << " after optimize nmpc" << std::endl;
                 acmd = nmpc->u[0];
                 dkcmd = nmpc->u[1];
@@ -542,7 +565,7 @@ private:
     //std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     // For NMPC that does not have w: [x, y, z, psi, u, u_lowpass, K, K_lowpass, roll, p, pitch, q]
-    std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     //NMPCProblem* nmpc;
     std::shared_ptr<NMPCProblem> nmpc;

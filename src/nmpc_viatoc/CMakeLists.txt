@@ -63,8 +63,8 @@ include_directories(
 
 
   #/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w
-  /home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w_vakola_NLS_new_path_VC_AOD
-
+  #/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w_vakola_NLS_new_path_VC_AOD
+  /home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w_forest_path1_UAV
 
   #/home/mpc/VIATOC/examples/kinDynGeneratedCode_map_korjattu_path_tracking_fullmodel_ac_dynamics_roll_operator
   /home/mpc/Desktop/mba/mba                 # Add the mba directory to the include path
@@ -79,8 +79,8 @@ add_executable(viatoc_node src/viatoc_node.cpp
 #/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_longer_path/NMPCProblem.cpp
 
 #/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w/NMPCProblem.cpp
-/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w_vakola_NLS_new_path_VC_AOD/NMPCProblem.cpp
-
+#/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w_vakola_NLS_new_path_VC_AOD/NMPCProblem.cpp
+/home/mpc/VIATOC/examples/Paper_model_ROS_IFAC_paper_V2_delta_change_no_w_forest_path1_UAV/NMPCProblem.cpp
 
 #/home/mpc/VIATOC/examples/Paper_model_ROS_Kl_1/NMPCProblem.cpp
 #/home/mpc/VIATOC/examples/kinDynGeneratedCode_map_korjattu_path_tracking_fullmodel_ac_dynamics_roll_operator/NMPCProblem.cpp
