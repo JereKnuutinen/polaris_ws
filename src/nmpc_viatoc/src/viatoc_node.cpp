@@ -89,7 +89,7 @@ public:
     MPCControllerNode() {
         ros::NodeHandle nh;
         // Subscribe to EKF data
-        EKF_state_estimate_sub_ = nh.subscribe("/ekf_out1", 1, &MPCControllerNode::EKFCallback, this);
+        EKF_state_estimate_sub_ = nh.subscribe("/ekf_out", 1, &MPCControllerNode::EKFCallback, this);
 
         // Publisher for control commands
         cmd_pub_ = nh.advertise<geometry_msgs::Accel>("/nmpc_out", 100);
@@ -311,13 +311,13 @@ public:
     void runMPCControl() {
         //*ptr = (void *) nmpc;
         //set initial control trajectory
-        int i,j;
-
+        //int i,j;
+        int j;
         // // // // Wait for ATV service server
-        // if (!atvServiceClient_.waitForExistence(ros::Duration(10.0))) {
-        //     ROS_ERROR("ATV service server not available on network (VIATOC NODE) !!!!!!");
-        //     //return -1;
-        // }
+        if (!atvServiceClient_.waitForExistence(ros::Duration(10.0))) {
+            ROS_ERROR("ATV service server not available on network (VIATOC NODE) !!!!!!");
+            //return -1;
+        }
         double acmd;
         double dkcmd;
         double Vcmd;
@@ -354,7 +354,7 @@ public:
                 // for(i = 0; i < 12; i++)
                 //     std::cout << EKF_state_[i] << std::endl;
 
-                for(i = 0; i < nmpc->numStates; i++) {
+                for(int i = 0; i < nmpc->numStates; i++) {
                     nmpc->x[i] = EKF_state_[i];
                 }
                 
@@ -362,12 +362,12 @@ public:
                 //
 
                 // set x_ref
-                for(i = 0; i < nmpc->numStates*nmpc->numSteps; i++) {
+                for(int i = 0; i < nmpc->numStates*nmpc->numSteps; i++) {
                     //std::cout << i % x_ref_.size() << std::endl;
                     nmpc->x_ref[i] = x_ref_[i % x_ref_.size()];
                 }
                 // set u_ref
-                for(i = 0; i < nmpc->numControls*nmpc->numSteps; i++) {
+                for(int i = 0; i < nmpc->numControls*nmpc->numSteps; i++) {
                     nmpc->u_ref[i] = u_ref_[i % u_ref_.size()];
                 }
 
@@ -381,7 +381,7 @@ public:
                 if (c == 'i') {
                     init_or_opt = 0;
                 }
-                // for(i = 0; i < nmpc->numSteps; i++) {
+                // for(i = 0; i < nmpc->numSteps+1; i++) {
                 // printf("pred pitch x before %d %f \n", i, nmpc->x[i*12 + 10]);
                 // }
                 //std::cout << "printtaapi " << c << std::endl;
@@ -397,17 +397,11 @@ public:
                 double cpu0  = get_cpu_time();
                 //https://en.cppreference.com/w/cpp/chrono
                 const auto start_new_chrono{std::chrono::steady_clock::now()};
-
-
-
                 ////////// Optimize nmpc //////////////////
                 nmpc->optimize(50);
-
-
-
                 const auto end_new_chrono{std::chrono::steady_clock::now()};
                 const std::chrono::duration<double> elapsed_seconds_new_chrono{end_new_chrono - start_new_chrono};
-                // for(i = 0; i < nmpc->numSteps; i++) {
+                // for(i = 0; i < nmpc->numSteps+1; i++) {
                 //     printf("pred pitch x  after %d %f \n", i, nmpc->x[i*12 + 10]);
                 // }
                 std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
@@ -425,9 +419,9 @@ public:
                 double execution_time = (end_ - start_).toNSec() * 1.0e-9;
                 double execution_time2 = (end_2 - start_2).toSec(); //toNSec() * 1e-9;
                 std::cout << "New chrono " << elapsed_seconds_new_chrono.count() << std::endl;
-                std::cout << "std::clock Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
-                std::cout << "gettimeofday Wall Time = " << wall1 - wall0 << std::endl;
-                std::cout << "gettimeofday CPU Time  = " << cpu1  - cpu0  << std::endl;
+                // std::cout << "std::clock Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
+                // std::cout << "gettimeofday Wall Time = " << wall1 - wall0 << std::endl;
+                // std::cout << "gettimeofday CPU Time  = " << cpu1  - cpu0  << std::endl;
                 std::cout << "Time (ROS walltime) 1.0 (s) " << execution_time << std::endl;
                 std::cout << "Time (ROS walltime2) (s) " << execution_time2<< std::endl;
                 //toc();
@@ -435,8 +429,8 @@ public:
                 // Calculate the elapsed time
                 long seconds = end.tv_sec - start.tv_sec;
                 long nanoseconds = end.tv_nsec - start.tv_nsec;
-                std::cout << "seconds " << seconds << std::endl;
-                 std::cout << "nanoseconds " << nanoseconds << std::endl;
+                //std::cout << "seconds " << seconds << std::endl;
+                // std::cout << "nanoseconds " << nanoseconds << std::endl;
                 double elapsed = seconds + nanoseconds*0.000000001; //1.0e-9;
                 std::cout << "Time (clock_gettime) (s) " << elapsed << std::endl;
                 std::cout << "Duration loop(Chrono CPU Time): " << std::chrono::duration<double, std::milli>(end_chrono-start_chrono).count() << "ms"<< std::endl;
@@ -460,8 +454,8 @@ public:
                     Vcmd = 0.0;
                     Kcmd = 0.0;
                 }
-                // std::cout << "acc " << acmd << std::endl;
-                // std::cout << "dkcmd1 " << dkcmd << std::endl;
+                std::cout << "acc " << acmd << std::endl;
+                std::cout << "dkcmd1 " << dkcmd << std::endl;
                 // std::cout << " Iteraatio " << std::endl;
                 // for (int iii = 0; iii < 100; iii++) {
                 //     std::cout << nmpc->x[(iii)*12 + 8] << std::endl;
@@ -532,12 +526,12 @@ public:
                 srv.request.control_mode = false; // true for torque, false for speed
                 srv.request.direction = true;
 
-                // if (atvServiceClient_.call(srv)) {
-                //     //srv.response;
-                // } else {
-                //     std::cout << "error in service call (VIATOC NODE)" << std::endl;
-                //     ROS_ERROR("Failed to call ATV service from VIATOC node");
-                // }
+                if (atvServiceClient_.call(srv)) {
+                    //srv.response;
+                } else {
+                    std::cout << "error in service call (VIATOC NODE)" << std::endl;
+                    ROS_ERROR("Failed to call ATV service from VIATOC node");
+                }
 
                 new_sensor_data_available_ = false;
             }
@@ -551,7 +545,7 @@ private:
     ros::Publisher cmd_pub_; // Controlcommand publisher
     ros::Publisher control_state_pub_; // control state publisher publish second state
     ros::ServiceClient atvServiceClient_;
-    int test_muuttuja2;
+    int test_muuttuja22;
 
     std::vector<double> u_ref_ = {0.0, 0.0}; 
     // state for kinematic + 3 dof model
@@ -565,7 +559,7 @@ private:
     //std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     // For NMPC that does not have w: [x, y, z, psi, u, u_lowpass, K, K_lowpass, roll, p, pitch, q]
-    std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    std::vector<double> x_ref_ = {0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     //NMPCProblem* nmpc;
     std::shared_ptr<NMPCProblem> nmpc;

@@ -5,6 +5,7 @@
 //double data[23412];
 //double data[30261];
 //double data[7332];
+//double data[38307];
 double data[38307];
 template<typename T> bool readFromFile(const char* filename, T* data, int size) {
     std::ifstream file(filename);
@@ -43,7 +44,7 @@ static double evalMap(const mba::MBA<2>& interp, int size, double x, double y, i
         return Dy;
     }
 
-    return 0.0; // Default case
+    return 0.0;
 }
 
 MyInterpolator::MyInterpolator() {
@@ -66,6 +67,18 @@ MyInterpolator::MyInterpolator() {
          //mexErrMsgTxt("Failed to read data from file.");
     		std::cout << " MAP reading failed in the case of EKF" << std::endl;
    }
+   //if (!readFromFile("/home/mpc/viatoc_matlab/rollover_nmpc-main/Forest_data_toukokuu_UAV_path1/forest_ll_map_toukokuu_UAV_EKF.txt", data, 42966)) {
+         //mexErrMsgTxt("Failed to read data from file.");
+    	//	std::cout << " MAP reading failed in the case of EKF" << std::endl;
+  // }
+   //if (!readFromFile("/home/mpc/viatoc_matlab/rollover_nmpc-main/Forest_data_toukokuu_UAV_path2/forest_ll_map_toukokuu_UAV_path2_EKF.txt", data, 90801)) {
+         //mexErrMsgTxt("Failed to read data from file.");
+    		//std::cout << " MAP reading failed in the case of EKF" << std::endl;
+  // }
+     // if (!readFromFile("/home/mpc/viatoc_matlab/rollover_nmpc-main/Forest_data_toukokuu_UAV_path3/forest_ll_map_toukokuu_UAV_path3_EKF.txt", data, 68670)) {
+         //mexErrMsgTxt("Failed to read data from file.");
+    		//std::cout << " MAP reading failed in the case of EKF" << std::endl;
+  // }
     int size_data = sizeof(data) / sizeof(double);
     std::vector<mba::point<2>> coo;
     std::vector<double> val;
@@ -85,9 +98,22 @@ MyInterpolator::MyInterpolator() {
     // For vakola concrete
     //mba::point<2> lo = {24.354154851175654-0.00000000001, 60.449316778362487-0.00000000001};
     //mba::point<2> hi = {24.354829075732617+0.00000000001,  60.449649844775443+0.00000000001}; 
+    
     // Vakola new AOD map
     mba::point<2> lo = {24.354174850537071-0.00000000001, 60.449326110281270-0.00000000001};
     mba::point<2> hi = {24.354809414815332+0.00000000001,  60.449639584551527+0.00000000001};
+    // Forest path 1 UAV map
+    //mba::point<2> lo = {24.347244777327845-0.00000000001, 60.451263307777126-0.00000000001};
+    //mba::point<2> hi = {24.348002436842062+0.00000000001,  60.452106677875882+0.00000000001};
+    
+    // Forest path 2 UAV map
+    //mba::point<2> lo = {24.347758592990875-0.00000000001, 60.452046595974068-0.00000000001}; // Num of ponts in path2: 90801
+   // mba::point<2> hi = {24.349418641286540+0.00000000001,  60.452840760472291+0.00000000001};
+    
+    // Forest path 3 UAV map
+    //mba::point<2> lo = {24.349515873611765-0.00000000001, 60.452842260802576-0.00000000001}; // Num of points in path3: 68670
+    //mba::point<2> hi = {24.350572815550880+0.00000000001,  60.453799026626044+0.00000000001};  
+      
     mba::index<2> grid = {2, 2};
     for (int i = 0; i < size_data; i += 3) {
         mba::point<2> point;
